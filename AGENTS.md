@@ -32,7 +32,7 @@
 ## Operational Gotchas
 - RBAC in `deploy/manifests.yaml` grants cluster-wide secret `get`; tighten scope if you standardize secret location.
 - `deploy/manifests.yaml` defaults to `ghcr.io/immortalvision/arvancloud-acme-webhook:latest`; pin explicit version tags in production.
-- `deploy/example-secret.yaml` contains sample credentials only; never commit real API keys.
+- `deploy/examples/common/secret.yaml` contains sample credentials only; never commit real API keys.
 
 ## CI/CD
 - CI workflow: `.github/workflows/ci.yml` runs `go mod tidy` drift check, `go test ./...`, and `docker build` on PRs and `main` pushes.

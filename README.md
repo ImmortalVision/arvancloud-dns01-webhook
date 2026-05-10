@@ -44,13 +44,18 @@ kubectl apply -f deploy/manifests.yaml
 5. Create API key secret (example):
 
 ```bash
-kubectl apply -f deploy/example-secret.yaml
+kubectl apply -f deploy/examples/common/secret.yaml
 ```
 
-6. Create your issuer (example):
+6. Create a Let's Encrypt issuer:
+
+   - Staging (recommended for initial testing):
+     - `deploy/examples/staging/clusterissuer.yaml`
+   - Production:
+     - `deploy/examples/production/clusterissuer.yaml`
 
 ```bash
-kubectl apply -f deploy/example-clusterissuer.yaml
+kubectl apply -f deploy/examples/staging/clusterissuer.yaml
 ```
 
 ## Solver config
@@ -78,6 +83,29 @@ dns01:
         namespace: cert-manager
       zone: example.com
       ttl: 120
+```
+
+## Let's Encrypt examples
+
+- Production issuer example: `deploy/examples/production/clusterissuer.yaml`
+- Staging issuer example: `deploy/examples/staging/clusterissuer.yaml`
+
+Use staging first to avoid production rate limits while validating DNS01 flow.
+
+### Staging certificate example
+
+Apply a test certificate against the staging issuer:
+
+```bash
+kubectl apply -f deploy/examples/staging/certificate.yaml
+```
+
+Then verify challenge/certificate status:
+
+```bash
+kubectl get challenge -A
+kubectl describe challenge -A
+kubectl get certificate,certificaterequest -A
 ```
 
 ## Verify issuance
