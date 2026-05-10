@@ -14,7 +14,7 @@
 ## Verified Commands
 - Compile/check: `go test ./...`
 - Refresh deps after changing imports: `go mod tidy`
-- Build container: `docker build -t ghcr.io/immortalvision/arvancloud-acme-webhook:latest .`
+- Build container: `docker build -t ghcr.io/immortalvision/arvancloud-dns01-webhook:latest .`
 
 ## Arvan API Contracts Used (from OpenAPI)
 - Base URL default: `https://napi.arvancloud.ir/cdn/4.0`
@@ -31,7 +31,7 @@
 
 ## Operational Gotchas
 - RBAC in `deploy/manifests.yaml` grants cluster-wide secret `get`; tighten scope if you standardize secret location.
-- `deploy/manifests.yaml` defaults to `ghcr.io/immortalvision/arvancloud-acme-webhook:latest`; pin explicit version tags in production.
+- `deploy/manifests.yaml` defaults to `ghcr.io/immortalvision/arvancloud-dns01-webhook:latest`; pin explicit version tags in production.
 - `deploy/examples/common/secret.yaml` contains sample credentials only; never commit real API keys.
 
 ## CI/CD

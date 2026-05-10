@@ -31,4 +31,4 @@ jobs:
         run: go test ./...
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/immortalvision/arvancloud-acme-webhook:ci-${{ github.sha }} .
+        run: docker build -t ghcr.io/immortalvision/arvancloud-dns01-webhook:ci-${{ github.sha }} .
