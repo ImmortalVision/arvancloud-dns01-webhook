@@ -1,0 +1,122 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: cert-manager-webhook-arvancloud
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: cert-manager-webhook-arvancloud
+  namespace: cert-manager-webhook-arvancloud
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: cert-manager-webhook-arvancloud:secrets-reader
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: cert-manager-webhook-arvancloud:secrets-reader
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: cert-manager-webhook-arvancloud:secrets-reader
+subjects:
+  - kind: ServiceAccount
+    name: cert-manager-webhook-arvancloud
+    namespace: cert-manager-webhook-arvancloud
+---
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: cert-manager-webhook-arvancloud-selfsign
+  namespace: cert-manager-webhook-arvancloud
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: cert-manager-webhook-arvancloud-tls
+  namespace: cert-manager-webhook-arvancloud
+spec:
+  secretName: cert-manager-webhook-arvancloud-webhook-tls
+  dnsNames:
+    - cert-manager-webhook-arvancloud.cert-manager-webhook-arvancloud.svc
+    - cert-manager-webhook-arvancloud.cert-manager-webhook-arvancloud.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: cert-manager-webhook-arvancloud-selfsign
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-manager-webhook-arvancloud
+  namespace: cert-manager-webhook-arvancloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: cert-manager-webhook-arvancloud
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: cert-manager-webhook-arvancloud
+    spec:
+      serviceAccountName: cert-manager-webhook-arvancloud
+      containers:
+        - name: webhook
+          image: ghcr.io/immortalvision/arvancloud-acme-webhook:latest
+          imagePullPolicy: IfNotPresent
+          args:
+            - --v=2
+            - --secure-port=6443
+            - --tls-cert-file=/tls/tls.crt
+            - --tls-private-key-file=/tls/tls.key
+          env:
+            - name: GROUP_NAME
+              value: acme.arvancloud.ir
+          ports:
+            - name: https
+              containerPort: 6443
+          volumeMounts:
+            - name: tls
+              mountPath: /tls
+              readOnly: true
+      volumes:
+        - name: tls
+          secret:
+            secretName: cert-manager-webhook-arvancloud-webhook-tls
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cert-manager-webhook-arvancloud
+  namespace: cert-manager-webhook-arvancloud
+spec:
+  ports:
+    - name: https
+      port: 443
+      targetPort: https
+  selector:
+    app.kubernetes.io/name: cert-manager-webhook-arvancloud
+---
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  name: v1alpha1.acme.arvancloud.ir
+  annotations:
+    cert-manager.io/inject-ca-from: cert-manager-webhook-arvancloud/cert-manager-webhook-arvancloud-tls
+spec:
+  group: acme.arvancloud.ir
+  groupPriorityMinimum: 1000
+  versionPriority: 15
+  service:
+    namespace: cert-manager-webhook-arvancloud
+    name: cert-manager-webhook-arvancloud
+  version: v1alpha1
