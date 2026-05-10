@@ -46,6 +46,8 @@ metadata:
   namespace: cert-manager-webhook-arvancloud
 spec:
   secretName: cert-manager-webhook-arvancloud-webhook-tls
+  privateKey:
+    rotationPolicy: Always
   dnsNames:
     - cert-manager-webhook-arvancloud.cert-manager-webhook-arvancloud.svc
     - cert-manager-webhook-arvancloud.cert-manager-webhook-arvancloud.svc.cluster.local
