@@ -1,6 +1,12 @@
 # cert-manager webhook for ArvanCloud DNS01
 
+Language: English | [فارسی](README.fa.md)
+
 This project provides a cert-manager DNS01 webhook solver for ArvanCloud DNS.
+
+## Background
+
+This repository was created because HTTP-01 validation was not reliably usable for some Iranian-hosted services during US-Iran war-time conditions in Iran. Using DNS-01 through ArvanCloud DNS enables stable certificate issuance and automatic renewal without depending on direct HTTP reachability from ACME validators.
 
 ## What this webhook does
 
