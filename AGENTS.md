@@ -27,7 +27,7 @@
 ## Webhook Config Conventions
 - Required config fields: `apiKeySecretRef.name`, `apiKeySecretRef.key`.
 - Optional: `apiKeySecretRef.namespace` (defaults to challenge namespace), `zone`, `ttl`, `apiEndpoint`.
-- If `zone` is omitted, solver uses cert-manager `resolvedZone`; for predictable behavior keep `zone` explicit in issuer config.
+- If `zone` is omitted, solver uses cert-manager `resolvedZone`; set `zone` explicitly only when you need strict zone matching.
 
 ## Operational Gotchas
 - RBAC in `deploy/manifests.yaml` grants cluster-wide secret `get`; tighten scope if you standardize secret location.

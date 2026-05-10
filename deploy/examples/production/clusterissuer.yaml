@@ -18,6 +18,8 @@ spec:
                 name: arvancloud-api-key
                 key: api-key
                 namespace: cert-manager
-              zone: example.com
+              # Optional: set zone explicitly for strict matching (e.g. example.com).
+              # If omitted, solver uses cert-manager resolvedZone automatically.
+              # zone: example.com
               ttl: 120
               apiEndpoint: https://napi.arvancloud.ir/cdn/4.0
