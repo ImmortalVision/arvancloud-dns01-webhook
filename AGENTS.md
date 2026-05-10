@@ -27,12 +27,12 @@
 ## Webhook Config Conventions
 - Required config fields: `apiKeySecretRef.name`, `apiKeySecretRef.key`.
 - Optional: `apiKeySecretRef.namespace` (defaults to challenge namespace), `zone`, `ttl`, `apiEndpoint`.
-- If `zone` is omitted, solver uses cert-manager `resolvedZone`; for predictable behavior keep `zone` explicit in issuer config.
+- If `zone` is omitted, solver uses cert-manager `resolvedZone`; set `zone` explicitly only when you need strict zone matching.
 
 ## Operational Gotchas
 - RBAC in `deploy/manifests.yaml` grants cluster-wide secret `get`; tighten scope if you standardize secret location.
 - `deploy/manifests.yaml` defaults to `ghcr.io/immortalvision/arvancloud-acme-webhook:latest`; pin explicit version tags in production.
-- `deploy/example-secret.yaml` contains sample credentials only; never commit real API keys.
+- `deploy/examples/common/secret.yaml` contains sample credentials only; never commit real API keys.
 
 ## CI/CD
 - CI workflow: `.github/workflows/ci.yml` runs `go mod tidy` drift check, `go test ./...`, and `docker build` on PRs and `main` pushes.

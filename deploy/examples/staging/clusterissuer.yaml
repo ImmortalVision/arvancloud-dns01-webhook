@@ -1,0 +1,25 @@
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: letsencrypt-staging-arvancloud
+spec:
+  acme:
+    email: you@example.com
+    server: https://acme-staging-v02.api.letsencrypt.org/directory
+    privateKeySecretRef:
+      name: letsencrypt-staging-arvancloud-account-key
+    solvers:
+      - dns01:
+          webhook:
+            groupName: acme.arvancloud.ir
+            solverName: arvancloud
+            config:
+              apiKeySecretRef:
+                name: arvancloud-api-key
+                key: api-key
+                namespace: cert-manager
+              # Optional: set zone explicitly for strict matching (e.g. example.com).
+              # If omitted, solver uses cert-manager resolvedZone automatically.
+              # zone: example.com
+              ttl: 120
+              apiEndpoint: https://napi.arvancloud.ir/cdn/4.0
