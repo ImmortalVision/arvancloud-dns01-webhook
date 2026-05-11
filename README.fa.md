@@ -23,7 +23,7 @@
 
 آدرس پیش‌فرض API: `https://napi.arvancloud.ir/cdn/4.0`
 
-هدر احراز هویت: `Authorization: API KEY ...`
+هدر احراز هویت: `Authorization: APIKEY ...`
 
 ## بیلد محلی
 
