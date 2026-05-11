@@ -18,6 +18,8 @@ concurrency:
 jobs:
   test-and-build:
     runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ghcr.io/immortalvision/arvancloud-dns01-webhook
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -37,4 +39,4 @@ jobs:
         run: go test ./...
 
       - name: Build Docker image
-        run: docker build -t ghcr.io/immortalvision/arvancloud-dns01-webhook:ci-${{ github.sha }} .
+        run: docker build -t $IMAGE_NAME:ci-${{ github.sha }} .
