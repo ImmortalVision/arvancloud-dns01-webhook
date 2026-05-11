@@ -39,15 +39,15 @@ helm repo add immortalvision https://immortalvision.github.io/arvancloud-dns01-w
 helm repo update
 helm search repo immortalvision/arvancloud-dns01-webhook --versions
 helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
-  -n arvancloud-dns01-webhook --create-namespace
+  -n arvancloud-dns01-webhook
 ```
 
 نصب نسخه مشخص:
 
 ```bash
 helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
-  --version 0.1.0 \
-  -n arvancloud-dns01-webhook --create-namespace
+  --version <chart-version> \
+  -n arvancloud-dns01-webhook
 ```
 
 ## دیپلوی وبهوک (مانیفست خام)

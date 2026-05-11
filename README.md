@@ -41,7 +41,7 @@ helm repo add immortalvision https://immortalvision.github.io/arvancloud-dns01-w
 helm repo update
 helm search repo immortalvision/arvancloud-dns01-webhook --versions
 helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
-  -n arvancloud-dns01-webhook --create-namespace
+  -n arvancloud-dns01-webhook
 ```
 
 To install a specific version:
@@ -49,7 +49,7 @@ To install a specific version:
 ```bash
 helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
   --version <chart-version> \
-  -n arvancloud-dns01-webhook --create-namespace
+  -n arvancloud-dns01-webhook
 ```
 
 ## Deploy webhook (raw manifests)

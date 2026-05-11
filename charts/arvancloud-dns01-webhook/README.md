@@ -10,13 +10,15 @@ Helm chart for deploying the cert-manager DNS01 webhook for ArvanCloud.
 ## Install
 
 ```bash
-helm upgrade --install arvancloud-dns01-webhook ./charts/arvancloud-dns01-webhook
+helm upgrade --install arvancloud-dns01-webhook ./charts/arvancloud-dns01-webhook \
+  -n arvancloud-dns01-webhook
 ```
 
 ## Example override
 
 ```bash
 helm upgrade --install arvancloud-dns01-webhook ./charts/arvancloud-dns01-webhook \
+  -n arvancloud-dns01-webhook \
   --set image.tag=v0.1.0 \
   --set groupName=acme.arvancloud.ir
 ```
@@ -28,6 +30,7 @@ Set `clusterIssuer.email` and point `clusterIssuer.solver.apiKeySecretRef` to yo
 
 ```bash
 helm upgrade --install arvancloud-dns01-webhook ./charts/arvancloud-dns01-webhook \
+  -n arvancloud-dns01-webhook \
   --set clusterIssuer.email=you@example.com \
   --set clusterIssuer.solver.apiKeySecretRef.name=arvancloud-api-key \
   --set clusterIssuer.solver.apiKeySecretRef.key=api-key \
@@ -42,6 +45,7 @@ You can additionally create a staging `ClusterIssuer` for safer testing before p
 
 ```bash
 helm upgrade --install arvancloud-dns01-webhook ./charts/arvancloud-dns01-webhook \
+  -n arvancloud-dns01-webhook \
   --set clusterIssuer.email=you@example.com \
   --set clusterIssuerStaging.enabled=true \
   --set clusterIssuerStaging.email=you@example.com
