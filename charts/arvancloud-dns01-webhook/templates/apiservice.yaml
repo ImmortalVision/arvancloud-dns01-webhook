@@ -1,0 +1,19 @@
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  name: {{ include "arvancloud-dns01-webhook.apiServiceName" . }}
+  labels:
+    {{- include "arvancloud-dns01-webhook.labels" . | nindent 4 }}
+  {{- if .Values.tls.certManager.enabled }}
+  annotations:
+    cert-manager.io/inject-ca-from: {{ include "arvancloud-dns01-webhook.namespace" . }}/{{ .Values.tls.certificateName }}
+  {{- end }}
+spec:
+  group: {{ .Values.groupName }}
+  groupPriorityMinimum: {{ .Values.apiService.groupPriorityMinimum }}
+  versionPriority: {{ .Values.apiService.versionPriority }}
+  service:
+    namespace: {{ include "arvancloud-dns01-webhook.namespace" . }}
+    name: {{ include "arvancloud-dns01-webhook.fullname" . }}
+    port: {{ .Values.service.port }}
+  version: {{ .Values.apiService.version }}

@@ -1,0 +1,12 @@
+apiVersion: v2
+name: arvancloud-dns01-webhook
+description: A Helm chart for cert-manager ArvanCloud DNS01 webhook
+home: https://github.com/immortalvision/arvancloud-dns01-webhook
+type: application
+version: 0.2.0
+appVersion: "latest"
+keywords:
+  - cert-manager
+  - dns01
+  - arvancloud
+  - webhook

@@ -1,0 +1,29 @@
+{{- if .Values.clusterIssuerStaging.enabled }}
+apiVersion: cert-manager.io/v1
+kind: ClusterIssuer
+metadata:
+  name: {{ .Values.clusterIssuerStaging.name }}
+  labels:
+    {{- include "arvancloud-dns01-webhook.labels" . | nindent 4 }}
+spec:
+  acme:
+    email: {{ required "clusterIssuerStaging.email is required when clusterIssuerStaging.enabled=true" .Values.clusterIssuerStaging.email }}
+    server: {{ .Values.clusterIssuerStaging.server }}
+    privateKeySecretRef:
+      name: {{ .Values.clusterIssuerStaging.privateKeySecretName }}
+    solvers:
+      - dns01:
+          webhook:
+            groupName: {{ .Values.groupName }}
+            solverName: {{ .Values.clusterIssuerStaging.solver.solverName }}
+            config:
+              apiKeySecretRef:
+                name: {{ required "clusterIssuerStaging.solver.apiKeySecretRef.name is required when clusterIssuerStaging.enabled=true" .Values.clusterIssuerStaging.solver.apiKeySecretRef.name }}
+                key: {{ required "clusterIssuerStaging.solver.apiKeySecretRef.key is required when clusterIssuerStaging.enabled=true" .Values.clusterIssuerStaging.solver.apiKeySecretRef.key }}
+                namespace: {{ .Values.clusterIssuerStaging.solver.apiKeySecretRef.namespace }}
+              {{- with .Values.clusterIssuerStaging.solver.zone }}
+              zone: {{ . }}
+              {{- end }}
+              ttl: {{ .Values.clusterIssuerStaging.solver.ttl }}
+              apiEndpoint: {{ .Values.clusterIssuerStaging.solver.apiEndpoint }}
+{{- end }}

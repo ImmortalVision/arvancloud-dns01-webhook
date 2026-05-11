@@ -1,0 +1,6 @@
+{{- if .Values.namespace.create }}
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: {{ include "arvancloud-dns01-webhook.namespace" . }}
+{{- end }}
