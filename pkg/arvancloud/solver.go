@@ -193,12 +193,14 @@ func normalizeAuthorizationHeader(apiKey string) string {
 		if token != "" {
 			return "APIKEY " + token
 		}
+		return trimmed
 	}
 	if len(fields) >= 1 && strings.EqualFold(fields[0], "apikey") {
 		token := strings.TrimSpace(strings.Join(fields[1:], " "))
 		if token != "" {
 			return "APIKEY " + token
 		}
+		return trimmed
 	}
 	return "APIKEY " + trimmed
 }
