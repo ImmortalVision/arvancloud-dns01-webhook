@@ -35,7 +35,7 @@ apiService:
   versionPriority: 15
 
 clusterIssuer:
-  enabled: true
+  enabled: false
   name: letsencrypt-arvancloud
   email: ""
   server: https://acme-v02.api.letsencrypt.org/directory
