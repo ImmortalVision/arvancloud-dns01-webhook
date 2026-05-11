@@ -22,7 +22,7 @@ func TestCreateTXTRecord(t *testing.T) {
 		if r.URL.Path != "/cdn/4.0/domains/example.com/dns-records" {
 			t.Fatalf("path = %s", r.URL.Path)
 		}
-		if got := r.Header.Get("Authorization"); got != "API KEY token" {
+		if got := r.Header.Get("Authorization"); got != "APIKEY token" {
 			t.Fatalf("authorization = %q", got)
 		}
 		if got := r.Header.Get("Content-Type"); got != "application/json" {
@@ -42,7 +42,7 @@ func TestCreateTXTRecord(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := newClient(srv.URL+"/cdn/4.0", "API KEY token", srv.Client())
+	c := newClient(srv.URL+"/cdn/4.0", "APIKEY token", srv.Client())
 	c.realSleep = false
 	c.sleep = func(time.Duration) {}
 
@@ -88,7 +88,7 @@ func TestListTXTRecordsPaginationAndSearch(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := newClient(srv.URL, "API KEY token", srv.Client())
+	c := newClient(srv.URL, "APIKEY token", srv.Client())
 	c.realSleep = false
 	c.sleep = func(time.Duration) {}
 
@@ -110,7 +110,7 @@ func TestDeleteRecordIgnoresNotFound(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := newClient(srv.URL, "API KEY token", srv.Client())
+	c := newClient(srv.URL, "APIKEY token", srv.Client())
 	c.realSleep = false
 	c.sleep = func(time.Duration) {}
 
@@ -135,7 +135,7 @@ func TestDoRetriesOn429AndSucceeds(t *testing.T) {
 	defer srv.Close()
 
 	var slept []time.Duration
-	c := newClient(srv.URL, "API KEY token", srv.Client())
+	c := newClient(srv.URL, "APIKEY token", srv.Client())
 	c.realSleep = false
 	c.sleep = func(d time.Duration) { slept = append(slept, d) }
 
@@ -162,7 +162,7 @@ func TestDoStopsAfterMaxRetries(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := newClient(srv.URL, "API KEY token", srv.Client())
+	c := newClient(srv.URL, "APIKEY token", srv.Client())
 	c.realSleep = false
 	c.sleep = func(time.Duration) {}
 
@@ -187,7 +187,7 @@ func TestDoContextCancellationDuringRetry(t *testing.T) {
 	}))
 	defer srv.Close()
 
-	c := newClient(srv.URL, "API KEY token", srv.Client())
+	c := newClient(srv.URL, "APIKEY token", srv.Client())
 	ctx, cancel := context.WithTimeout(context.Background(), 20*time.Millisecond)
 	defer cancel()
 

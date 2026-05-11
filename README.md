@@ -25,7 +25,7 @@ Based on Arvan OpenAPI `cdn-4.0.yml`:
 
 Base URL default: `https://napi.arvancloud.ir/cdn/4.0`
 
-Authorization header: `Authorization: API KEY ...`
+Authorization header: `Authorization: APIKEY ...`
 
 ## Local build
 

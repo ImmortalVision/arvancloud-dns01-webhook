@@ -54,9 +54,11 @@ func TestNormalizeAuthorizationHeader(t *testing.T) {
 		in   string
 		want string
 	}{
-		{in: "my-token", want: "API KEY my-token"},
-		{in: "API KEY abc", want: "API KEY abc"},
-		{in: "api key xyz", want: "api key xyz"},
+		{in: "my-token", want: "APIKEY my-token"},
+		{in: "APIKEY abc", want: "APIKEY abc"},
+		{in: "api key xyz", want: "APIKEY xyz"},
+		{in: "API KEY xyz", want: "APIKEY xyz"},
+		{in: "  APIKEY   xyz  ", want: "APIKEY xyz"},
 	}
 
 	for _, tt := range tests {
