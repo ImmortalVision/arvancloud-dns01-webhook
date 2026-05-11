@@ -1,0 +1,29 @@
+{{- if .Values.tls.certManager.enabled }}
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: {{ .Values.tls.issuerName }}
+  namespace: {{ include "arvancloud-dns01-webhook.namespace" . }}
+  labels:
+    {{- include "arvancloud-dns01-webhook.labels" . | nindent 4 }}
+spec:
+  selfSigned: {}
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: {{ .Values.tls.certificateName }}
+  namespace: {{ include "arvancloud-dns01-webhook.namespace" . }}
+  labels:
+    {{- include "arvancloud-dns01-webhook.labels" . | nindent 4 }}
+spec:
+  secretName: {{ .Values.tls.secretName }}
+  privateKey:
+    rotationPolicy: Always
+  dnsNames:
+    - {{ include "arvancloud-dns01-webhook.fullname" . }}.{{ include "arvancloud-dns01-webhook.namespace" . }}.svc
+    - {{ include "arvancloud-dns01-webhook.fullname" . }}.{{ include "arvancloud-dns01-webhook.namespace" . }}.svc.cluster.local
+  issuerRef:
+    kind: Issuer
+    name: {{ .Values.tls.issuerName }}
+{{- end }}

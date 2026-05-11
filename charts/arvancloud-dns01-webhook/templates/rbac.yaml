@@ -1,0 +1,27 @@
+{{- if .Values.rbac.clusterWideSecretAccess }}
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: {{ include "arvancloud-dns01-webhook.clusterRoleName" . }}
+  labels:
+    {{- include "arvancloud-dns01-webhook.labels" . | nindent 4 }}
+rules:
+  - apiGroups: [""]
+    resources: ["secrets"]
+    verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: {{ include "arvancloud-dns01-webhook.clusterRoleName" . }}
+  labels:
+    {{- include "arvancloud-dns01-webhook.labels" . | nindent 4 }}
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: {{ include "arvancloud-dns01-webhook.clusterRoleName" . }}
+subjects:
+  - kind: ServiceAccount
+    name: {{ include "arvancloud-dns01-webhook.serviceAccountName" . }}
+    namespace: {{ include "arvancloud-dns01-webhook.namespace" . }}
+{{- end }}

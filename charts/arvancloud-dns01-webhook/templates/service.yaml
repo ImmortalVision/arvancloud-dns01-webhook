@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "arvancloud-dns01-webhook.fullname" . }}
+  namespace: {{ include "arvancloud-dns01-webhook.namespace" . }}
+  labels:
+    {{- include "arvancloud-dns01-webhook.labels" . | nindent 4 }}
+spec:
+  ports:
+    - name: https
+      port: {{ .Values.service.port }}
+      targetPort: https
+  selector:
+    app.kubernetes.io/name: {{ include "arvancloud-dns01-webhook.fullname" . }}

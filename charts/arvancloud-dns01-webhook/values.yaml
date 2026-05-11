@@ -1,0 +1,45 @@
+groupName: acme.arvancloud.ir
+
+image:
+  repository: ghcr.io/immortalvision/arvancloud-dns01-webhook
+  tag: latest
+  pullPolicy: IfNotPresent
+
+replicaCount: 1
+
+namespace:
+  create: true
+  name: arvancloud-dns01-webhook
+
+serviceAccount:
+  create: true
+  name: ""
+
+rbac:
+  clusterWideSecretAccess: true
+
+tls:
+  certManager:
+    enabled: true
+  issuerName: arvancloud-dns01-webhook-selfsign
+  certificateName: arvancloud-dns01-webhook-tls
+  secretName: arvancloud-dns01-webhook-webhook-tls
+
+service:
+  name: arvancloud-dns01-webhook
+  port: 443
+
+apiService:
+  version: v1alpha1
+  groupPriorityMinimum: 1000
+  versionPriority: 15
+
+container:
+  verbosity: 2
+  securePort: 6443
+
+podLabels: {}
+resources: {}
+nodeSelector: {}
+tolerations: []
+affinity: {}
