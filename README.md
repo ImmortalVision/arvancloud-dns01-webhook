@@ -30,7 +30,7 @@ Authorization header: `Authorization: API KEY ...`
 
 ```bash
 go test ./...
-docker build -t ghcr.io/immortalvision/arvancloud-acme-webhook:latest .
+docker build -t ghcr.io/immortalvision/arvancloud-dns01-webhook:latest .
 ```
 
 ## Deploy webhook (raw manifests)
@@ -39,7 +39,7 @@ docker build -t ghcr.io/immortalvision/arvancloud-acme-webhook:latest .
 2. Build and push the webhook image.
 3. Update image in `deploy/manifests.yaml`:
 
-   - `ghcr.io/immortalvision/arvancloud-acme-webhook:latest`
+   - `ghcr.io/immortalvision/arvancloud-dns01-webhook:latest`
 
 4. Apply manifests:
 
@@ -138,8 +138,8 @@ Expected flow:
   - `go test ./...`
   - `docker build`
 - Release (`.github/workflows/release.yml`) runs on tag pushes matching `v*` and publishes to GHCR:
-  - `ghcr.io/immortalvision/arvancloud-acme-webhook:<tag>`
-  - `ghcr.io/immortalvision/arvancloud-acme-webhook:latest` for stable tags (no `-` prerelease suffix)
+  - `ghcr.io/immortalvision/arvancloud-dns01-webhook:<tag>`
+  - `ghcr.io/immortalvision/arvancloud-dns01-webhook:latest` for stable tags (no `-` prerelease suffix)
 
 ### Create a release image
 

@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/arvancloud/cert-manager-webhook-arvancloud/pkg/arvancloud"
+	"github.com/immortalvision/arvancloud-dns01-webhook/pkg/arvancloud"
 	"github.com/cert-manager/cert-manager/pkg/acme/webhook/cmd"
 	"k8s.io/klog/v2"
 )

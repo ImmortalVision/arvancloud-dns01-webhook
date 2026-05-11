@@ -1,4 +1,4 @@
-module github.com/arvancloud/cert-manager-webhook-arvancloud
+module github.com/immortalvision/arvancloud-dns01-webhook
 
 go 1.22.0
 

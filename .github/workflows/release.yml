@@ -33,7 +33,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ghcr.io/immortalvision/arvancloud-acme-webhook
+          images: ghcr.io/immortalvision/arvancloud-dns01-webhook
           flavor: |
             latest=false
           tags: |

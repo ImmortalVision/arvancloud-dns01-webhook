@@ -28,7 +28,7 @@
 
 ```bash
 go test ./...
-docker build -t ghcr.io/immortalvision/arvancloud-acme-webhook:latest .
+docker build -t ghcr.io/immortalvision/arvancloud-dns01-webhook:latest .
 ```
 
 ## دیپلوی وبهوک (مانیفست خام)
