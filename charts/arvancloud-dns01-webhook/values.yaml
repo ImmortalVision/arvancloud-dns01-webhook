@@ -34,6 +34,38 @@ apiService:
   groupPriorityMinimum: 1000
   versionPriority: 15
 
+clusterIssuer:
+  enabled: true
+  name: letsencrypt-arvancloud
+  email: ""
+  server: https://acme-v02.api.letsencrypt.org/directory
+  privateKeySecretName: letsencrypt-arvancloud-account-key
+  solver:
+    solverName: arvancloud
+    apiKeySecretRef:
+      name: arvancloud-api-key
+      key: api-key
+      namespace: cert-manager
+    zone: ""
+    ttl: 120
+    apiEndpoint: https://napi.arvancloud.ir/cdn/4.0
+
+clusterIssuerStaging:
+  enabled: false
+  name: letsencrypt-staging-arvancloud
+  email: ""
+  server: https://acme-staging-v02.api.letsencrypt.org/directory
+  privateKeySecretName: letsencrypt-staging-arvancloud-account-key
+  solver:
+    solverName: arvancloud
+    apiKeySecretRef:
+      name: arvancloud-api-key
+      key: api-key
+      namespace: cert-manager
+    zone: ""
+    ttl: 120
+    apiEndpoint: https://napi.arvancloud.ir/cdn/4.0
+
 container:
   verbosity: 2
   securePort: 6443
