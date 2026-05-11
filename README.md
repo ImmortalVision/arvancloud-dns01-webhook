@@ -13,6 +13,7 @@ This repository was created because HTTP-01 validation was not reliably usable f
 - Creates TXT records for ACME DNS01 challenges via ArvanCloud CDN v4 API.
 - Deletes matching TXT records during cleanup.
 - Reads the ArvanCloud API key from a Kubernetes Secret.
+- Retries transient Arvan API errors (`429`, `5xx`) with bounded backoff.
 
 ## Verified Arvan API endpoints used
 

@@ -4,19 +4,31 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
+	"math"
 	"net/http"
 	"net/url"
 	"path"
 	"strings"
+	"time"
 )
 
 type client struct {
 	baseURL    string
 	authHeader string
 	httpClient *http.Client
+	sleep      func(time.Duration)
+	realSleep  bool
 }
+
+const (
+	maxRetries            = 3
+	baseRetryDelay        = 200 * time.Millisecond
+	maxRetryDelay         = 2 * time.Second
+	retryJitterPercentage = 0.20
+)
 
 type dnsRecord struct {
 	ID    string          `json:"id"`
@@ -50,6 +62,8 @@ func newClient(baseURL, authHeader string, httpClient *http.Client) *client {
 		baseURL:    strings.TrimRight(baseURL, "/"),
 		authHeader: authHeader,
 		httpClient: httpClient,
+		sleep:      time.Sleep,
+		realSleep:  true,
 	}
 }
 
@@ -140,7 +154,8 @@ func (c *client) DeleteRecord(ctx context.Context, domain, recordID string) erro
 	}
 
 	if err := c.do(req, nil); err != nil {
-		if strings.Contains(strings.ToLower(err.Error()), "404") {
+		var apiErr *apiError
+		if errors.As(err, &apiErr) && apiErr.StatusCode == http.StatusNotFound {
 			return nil
 		}
 		return err
@@ -150,6 +165,47 @@ func (c *client) DeleteRecord(ctx context.Context, domain, recordID string) erro
 }
 
 func (c *client) do(req *http.Request, out any) error {
+	for attempt := 0; ; attempt++ {
+		attemptReq, err := cloneRequest(req)
+		if err != nil {
+			return err
+		}
+
+		body, _, err := c.doOnce(attemptReq)
+		if err == nil {
+			if out == nil || len(body) == 0 {
+				return nil
+			}
+			if err := json.Unmarshal(body, out); err != nil {
+				return fmt.Errorf("decode response body: %w", err)
+			}
+			return nil
+		}
+
+		var apiErr *apiError
+		if !errors.As(err, &apiErr) || !shouldRetryStatus(apiErr.StatusCode) || attempt >= maxRetries {
+			return err
+		}
+
+		delay := retryDelay(attempt, attemptReq.URL.Path)
+		if err := c.waitRetry(req.Context(), delay); err != nil {
+			return err
+		}
+	}
+}
+
+type apiError struct {
+	Method     string
+	Path       string
+	StatusCode int
+	Body       string
+}
+
+func (e *apiError) Error() string {
+	return fmt.Sprintf("arvan API %s %s failed with %d: %s", e.Method, e.Path, e.StatusCode, e.Body)
+}
+
+func (c *client) doOnce(req *http.Request) ([]byte, int, error) {
 	req.Header.Set("Authorization", c.authHeader)
 	req.Header.Set("Accept", "application/json")
 	if req.Body != nil {
@@ -158,28 +214,82 @@ func (c *client) do(req *http.Request, out any) error {
 
 	resp, err := c.httpClient.Do(req)
 	if err != nil {
-		return fmt.Errorf("request failed: %w", err)
+		return nil, 0, fmt.Errorf("request failed: %w", err)
 	}
 	defer resp.Body.Close()
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("read response body: %w", err)
+		return nil, resp.StatusCode, fmt.Errorf("read response body: %w", err)
 	}
 
 	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
-		return fmt.Errorf("arvan API %s %s failed with %d: %s", req.Method, req.URL.Path, resp.StatusCode, strings.TrimSpace(string(body)))
+		return nil, resp.StatusCode, &apiError{
+			Method:     req.Method,
+			Path:       req.URL.Path,
+			StatusCode: resp.StatusCode,
+			Body:       strings.TrimSpace(string(body)),
+		}
 	}
 
-	if out == nil || len(body) == 0 {
+	return body, resp.StatusCode, nil
+}
+
+func cloneRequest(req *http.Request) (*http.Request, error) {
+	cloned := req.Clone(req.Context())
+	if req.Body == nil {
+		return cloned, nil
+	}
+	if req.GetBody == nil {
+		return nil, fmt.Errorf("request body cannot be retried for %s %s", req.Method, req.URL.Path)
+	}
+	body, err := req.GetBody()
+	if err != nil {
+		return nil, fmt.Errorf("reset request body for %s %s: %w", req.Method, req.URL.Path, err)
+	}
+	cloned.Body = body
+	return cloned, nil
+}
+
+func shouldRetryStatus(code int) bool {
+	return code == http.StatusTooManyRequests || code >= http.StatusInternalServerError
+}
+
+func retryDelay(attempt int, path string) time.Duration {
+	// Exponential backoff with deterministic jitter (+/-20%).
+	delay := float64(baseRetryDelay) * math.Pow(2, float64(attempt))
+	if delay > float64(maxRetryDelay) {
+		delay = float64(maxRetryDelay)
+	}
+
+	jitterSign := 1.0
+	if (attempt+len(path))%2 == 0 {
+		jitterSign = -1.0
+	}
+	jitter := delay * retryJitterPercentage * jitterSign
+	return time.Duration(delay + jitter)
+}
+
+func (c *client) waitRetry(ctx context.Context, d time.Duration) error {
+	if d <= 0 || c.sleep == nil {
 		return nil
 	}
 
-	if err := json.Unmarshal(body, out); err != nil {
-		return fmt.Errorf("decode response body: %w", err)
+	// Tests can replace sleep with a no-op collector to avoid wall-clock waits.
+	if !c.realSleep {
+		c.sleep(d)
+		return nil
 	}
 
-	return nil
+	timer := time.NewTimer(d)
+	defer timer.Stop()
+
+	select {
+	case <-ctx.Done():
+		return fmt.Errorf("request canceled: %w", ctx.Err())
+	case <-timer.C:
+		return nil
+	}
 }
 
 func (c *client) endpoint(parts ...string) (string, error) {
