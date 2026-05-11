@@ -15,4 +15,5 @@ spec:
   service:
     namespace: {{ include "arvancloud-dns01-webhook.namespace" . }}
     name: {{ include "arvancloud-dns01-webhook.fullname" . }}
+    port: {{ .Values.service.port }}
   version: {{ .Values.apiService.version }}
