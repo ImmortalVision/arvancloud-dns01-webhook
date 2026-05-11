@@ -21,7 +21,7 @@
 - Create TXT: `POST /domains/{domain}/dns-records`
 - List records: `GET /domains/{domain}/dns-records?type=txt`
 - Delete record: `DELETE /domains/{domain}/dns-records/{id}`
-- Auth header uses `Authorization`; implementation expects key in `API KEY ...` format (auto-prefixes when missing).
+- Auth header uses `Authorization`; implementation sends `APIKEY ...` and normalizes legacy `API KEY ...` input.
 - TXT record payload uses `value.text`; TTL must be one of Arvan allowed enum values.
 
 ## Webhook Config Conventions

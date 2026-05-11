@@ -186,10 +186,23 @@ func secretValue(secret *corev1.Secret, key string) (string, error) {
 }
 
 func normalizeAuthorizationHeader(apiKey string) string {
-	if strings.HasPrefix(strings.ToUpper(apiKey), "API KEY ") {
-		return apiKey
+	trimmed := strings.TrimSpace(apiKey)
+	fields := strings.Fields(trimmed)
+	if len(fields) >= 2 && strings.EqualFold(fields[0], "api") && strings.EqualFold(fields[1], "key") {
+		token := strings.TrimSpace(strings.Join(fields[2:], " "))
+		if token != "" {
+			return "APIKEY " + token
+		}
+		return trimmed
 	}
-	return "API KEY " + apiKey
+	if len(fields) >= 1 && strings.EqualFold(fields[0], "apikey") {
+		token := strings.TrimSpace(strings.Join(fields[1:], " "))
+		if token != "" {
+			return "APIKEY " + token
+		}
+		return trimmed
+	}
+	return "APIKEY " + trimmed
 }
 
 func recordNameFromFQDN(resolvedFQDN, zone string) (string, error) {
