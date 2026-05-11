@@ -31,6 +31,24 @@ go test ./...
 docker build -t ghcr.io/immortalvision/arvancloud-dns01-webhook:latest .
 ```
 
+## نصب از Helm repository (GitHub Pages)
+
+```bash
+helm repo add immortalvision https://immortalvision.github.io/arvancloud-dns01-webhook
+helm repo update
+helm search repo immortalvision/arvancloud-dns01-webhook --versions
+helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
+  -n arvancloud-dns01-webhook --create-namespace
+```
+
+نصب نسخه مشخص:
+
+```bash
+helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
+  --version 0.1.0 \
+  -n arvancloud-dns01-webhook --create-namespace
+```
+
 ## دیپلوی وبهوک (مانیفست خام)
 
 1. ابتدا cert-manager را روی کلاستر نصب کنید.
@@ -88,3 +106,4 @@ kubectl get certificate,certificaterequest -A
 
 - CI: در `.github/workflows/ci.yml` روی PRها و push به `main`
 - Release: در `.github/workflows/release.yml` روی تگ‌های `v*` و انتشار روی GHCR
+- انتشار Helm chart: در `.github/workflows/release-chart.yml` روی `main` با تغییرات `charts/**` اجرا می‌شود و خروجی chart/index را روی GitHub Pages (شاخه `gh-pages`) منتشر می‌کند.

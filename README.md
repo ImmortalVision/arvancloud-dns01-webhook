@@ -33,6 +33,24 @@ go test ./...
 docker build -t ghcr.io/immortalvision/arvancloud-dns01-webhook:latest .
 ```
 
+## Install via Helm repository (GitHub Pages)
+
+```bash
+helm repo add immortalvision https://immortalvision.github.io/arvancloud-dns01-webhook
+helm repo update
+helm search repo immortalvision/arvancloud-dns01-webhook --versions
+helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
+  -n arvancloud-dns01-webhook --create-namespace
+```
+
+To install a specific version:
+
+```bash
+helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
+  --version 0.1.0 \
+  -n arvancloud-dns01-webhook --create-namespace
+```
+
 ## Deploy webhook (raw manifests)
 
 1. Install cert-manager in your cluster first.
@@ -140,6 +158,7 @@ Expected flow:
 - Release (`.github/workflows/release.yml`) runs on tag pushes matching `v*` and publishes to GHCR:
   - `ghcr.io/immortalvision/arvancloud-dns01-webhook:<tag>`
   - `ghcr.io/immortalvision/arvancloud-dns01-webhook:latest` for stable tags (no `-` prerelease suffix)
+- Helm chart release (`.github/workflows/release-chart.yml`) runs on `main` when `charts/**` changes and publishes Helm repo index/packages to GitHub Pages (`gh-pages` branch).
 
 ### Create a release image
 

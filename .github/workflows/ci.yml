@@ -24,6 +24,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Helm
+        uses: azure/setup-helm@v4
+
       - name: Setup Go
         uses: actions/setup-go@v5
         with:
@@ -37,6 +40,12 @@ jobs:
 
       - name: Run tests
         run: go test ./...
+
+      - name: Lint Helm chart
+        run: helm lint charts/arvancloud-dns01-webhook
+
+      - name: Package Helm chart
+        run: helm package charts/arvancloud-dns01-webhook --destination /tmp/charts
 
       - name: Build Docker image
         run: docker build -t $IMAGE_NAME:ci-${{ github.sha }} .
