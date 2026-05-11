@@ -48,7 +48,7 @@ To install a specific version:
 
 ```bash
 helm install arvancloud-dns01-webhook immortalvision/arvancloud-dns01-webhook \
-  --version 0.1.0 \
+  --version <chart-version> \
   -n arvancloud-dns01-webhook --create-namespace
 ```
 
